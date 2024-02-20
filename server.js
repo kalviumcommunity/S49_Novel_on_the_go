@@ -14,8 +14,8 @@ const client = new MongoClient(uri, {
 });
 
 ;
-app.get('/ping', (req, res)=>{
-    res.send('pong');
+app.get('/pin', (req, res)=>{
+    res.send('pon');
 });
 
 app.get("/", async (req, res) => {
