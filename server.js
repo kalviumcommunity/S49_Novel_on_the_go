@@ -12,12 +12,14 @@ const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
 ;
 app.get('/pin', (req, res)=>{
     res.send('pon');
 });
 
+const routes = require("./routes");
+
+app.use("/", routes);
 app.get("/", async (req, res) => {
     try {
       await client.connect();
@@ -41,5 +43,3 @@ if(require.main==module){
 }
 
 module.exports = app;
-
-
