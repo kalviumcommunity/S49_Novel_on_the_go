@@ -12,7 +12,7 @@ const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
+;
 app.get('/pin', (req, res)=>{
     res.send('pon');
 });
