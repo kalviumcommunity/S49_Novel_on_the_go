@@ -1,83 +1,47 @@
 const express = require('express');
 const router = express.Router();
-const { MongoClient } = require('mongodb');
 
-const uri = process.env.MONGODATA_URI;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+let users = [
+    { id: 1, Title: "The Great Gatsby", Description: '"The Great Gatsby" by F. Scott Fitzgerald is a timeless American classic set in the Roaring Twenties. Jay Gatsby, a mysterious millionaire, pursues the elusive Daisy Buchanan in a tale of love, wealth, and the American Dream. The novel explores the decadence and disillusionment of the Jazz Age with poetic brilliance.' },
+    { id: 2, Title: "The Catcher in the Rye", Description: '"The Catcher in the Rye" is a classic novel by J.D. Salinger, narrated by Holden Caulfield. Set in the 1950s, it explores Holdens journey of teenage angst and rebellion in New York City. The narrative captures his unique voice and introspective musings, providing a poignant and timeless portrayal of adolescence and societal disillusionment.' }
+];
 
-const connectDB = async (req, res, next) => {
-  try {
-    if (!client.isConnected()) {
-      await client.connect();
+router.get('/users', (req, res) => {
+    res.json(users);
+});
+router.get('/users/:id', (req, res) => {
+    const userId = parseInt(req.params.id);
+    const user = users.find(user => user.id === userId);
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
     }
-    req.dbClient = client;
-    next();
-  } catch (error) {
-    console.error('Error', error);
-    res.status(500).json({ "error": "Server Error" });
-  }
-};
-
-const closeDB = async (req, res, next) => {
-  try {
-    if (client.isConnected()) {
-      await client.close();
+    res.json(user);
+});
+router.post('/users', (req, res) => {
+    const newUser = {
+        id: users.length + 1, 
+        Title : "To Kill a Mockingbird",
+        Description: '"To Kill a Mockingbird" by Harper Lee is a poignant novel set in the racially charged American South during the 1930s. Through the eyes of Scout Finch, it explores themes of racial injustice, moral growth, and compassion. Atticus Finch, a lawyer, defends a wrongly accused Black man, showcasing the harsh realities of prejudice.'
+    };
+    users.push(newUser);
+    res.status(201).json(newUser);
+});
+router.put('/users/:id', (req, res) => {
+    const userId = parseInt(req.params.id);
+    const userIndex = users.findIndex(user => user.id === userId);
+    if (userIndex === -1) {
+        return res.status(404).json({ message: 'User not found' });
     }
-    next();
-  } catch (error) {
-    console.error('Error', error);
-    res.status(500).json({ "error": "Server Error" });
-  }
-};
-
-router.post('/create', connectDB, async (req, res) => {
-  try {
-    const { dbClient } = req;
-    res.status(201).json({ "success": "created" });
-  } catch (error) {
-    console.error('Error', error);
-    res.status(500).json({ "error": "Server Error" });
-  }
-  finally {
-    await closeDB(req, res);
-  }
-});
-router.delete('/delete', connectDB, async (req, res) => {
-    try {
-      const { dbClient } = req;
-      res.status(200).json({ "success": "data deleted" });
-    } catch (error) {
-      console.error('Error', error);
-      res.status(500).json({ "error": "Server Error" });
-    } finally {
-        await closeDB(req, res);
-      }
-  });
-
-router.get('/read', connectDB, async (req, res) => {
-  try {
-    const { dbClient } = req;
-    res.status(200).json({ "success": "data read" });
-  } catch (error) {
-    console.error('Error', error);
-    res.status(500).json({ "error": "Server Error" });
-  } finally {
-    await closeDB(req, res);
-  }
+    const { Title, Description } = req.body;
+    users[userIndex].Title = Title;
+    users[userIndex].Description = Description;
+    res.json(users[userIndex]);
 });
 
-router.put('/update', connectDB, async (req, res) => {
-  try {
-    const { dbClient } = req;
-    res.status(200).json({ "success": "data updated" });
-  } catch (error) {
-    console.error('Error', error);
-    res.status(500).json({ "error": "Server Error" });
-  } finally {
-    await closeDB(req, res);
-  }
+router.delete('/users/:id', (req, res) => {
+    const userId = parseInt(req.params.id);
+    users = users.filter(user => user.id !== userId);
+    res.json({ message: 'User deleted successfully' });
 });
 
-
-
-module.exports = router;                                                                                                                                          
+module.exports = router;
