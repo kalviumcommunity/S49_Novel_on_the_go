@@ -1,6 +1,6 @@
 import React from 'react';
-import backgroundImage from './books.jpg'; // Import the image file
-import './App.css'; // Import your CSS file for styling
+import backgroundImage from './books.jpg'; 
+import './App.css'; 
 
 const WelcomeComponent = () => {
   const containerStyle = {
