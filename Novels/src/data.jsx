@@ -25,22 +25,22 @@ const EntityComponent = () => {
           <strong>Description:</strong> {Data.description}
         </div>
         <div>
-          <strong>Author:</strong> ${Data.Author}
+          <strong>Author:</strong> {Data.Author}
         </div>
          <div>
-          <strong>ISBN Number:</strong> ${Data.ISBN}
+          <strong>ISBN Number:</strong> {Data.ISBN}
         </div>
          <div>
-          <strong>Date:</strong> ${Data.Date}
+          <strong>Date:</strong> {Data.Date}
         </div>
         <div>
-          <strong>Genre:</strong> ${Data.Genre}
+          <strong>Genre:</strong> {Data.Genre}
         </div>
         <div>
-          <strong>Number of Pages:</strong> ${Data.Pages}
+          <strong>Number of Pages:</strong> {Data.Pages}
         </div>
         <div>
-          <strong>Price:</strong> ${Data.price}
+          <strong>Price:</strong> {Data.price}
         </div>
         <div>
           <strong>Average Rating:</strong> {Data.Rating}
