@@ -4,3 +4,4 @@ I've got some exciting projects on the horizon, but before I jump in, I want to 
 ADITHI
 
 https://s49-novel-on-the-go-adithijhanavi1.onrender.com/ping
+https://deploybackendadi.netlify.app
