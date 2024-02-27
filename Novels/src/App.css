@@ -1,30 +1,17 @@
-html, body {
+ body {
   margin: 0;
   padding: 0;
   height: 100%;
+  
 }
 
 .main {
-  height: 100%;
-}
-
-.container {
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   height: 100vh;
   width: 100vw;
+  background-image: url('https://i.pinimg.com/originals/29/cd/bd/29cdbdcc53da3e3c988ca9544fbfa03e.gif');
+  background-repeat: no-repeat;
+  background-size: cover;
+
 }
-h1{
-  margin-top: 10px;
-}
-p{
-  margin-top: 100px;
-  margin-left: 40px;
-  font-size: larger;
-}
+
+
