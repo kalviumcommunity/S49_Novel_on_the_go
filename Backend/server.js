@@ -1,45 +1,38 @@
 
 const express = require('express');
-const { MongoClient } = require("mongodb");
+const mongoose = require("mongoose");
 require("dotenv").config();
 const app =express();
-const port= 3001;
+const port= 3000;
+const cors=require('cors')
+let BookModel=require("./models/books.js")
 
+app.use(cors());
 app.use(express.json());
-
-const uri = process.env.MONGODATA_URI;
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-;
-app.get('/pin', (req, res)=>{
-    res.send('pon');
-});
-
-const routes = require("./routes");
-
-app.use("/", routes);
-app.get("/", async (req, res) => {
-    try {
-      await client.connect();
-      if (client.topology.isConnected()) {
-        res.json({ message: "pong", database_status: "Connected" });
-        console.log("y");
-      } else {
-        res.json({ message: "pong", database_status: "Disconnected" });
-        console.log("n");
-      }
-    } catch (error) {
-      console.error("Error", error);
-      res.status(500).json({ error: "Error" });
-    }
-  });
-  
-if(require.main==module){
-    app.listen(port, ()=>{
-        console.log("Hello, let's read some books");
-    });
+app.use(express.urlencoded({ extended: true }));
+async function Connection(){
+  await mongoose.connect(process.env.MONGODATA_URI);
+  console.log("Connected to DB")
 }
+
+app.get("/",(req,res)=>{
+   res.send("Working")
+})
+app.get('/books', async (req, res) => {
+try {
+const books = await BookModel.find();
+console.log('Get Books:', books);
+res.json(books);
+} catch (err) {
+console.error('Error retrieving books:', err);
+res.status(500).json({ error: 'Internal Server Error' });
+}
+});
+Connection().then(()=>{
+app.listen(port, () => {
+console.log("Hello, let's read some books");
+});
+})
+
 
 module.exports = app;
