@@ -1,0 +1,58 @@
+body {
+  
+
+    min-height: 100vh;
+
+  }
+  
+  .container1 {
+    width: 360px;
+    background-color: white;
+    padding: 10px;
+    margin-left: 430px;
+    border-radius: 14px;
+    box-shadow: 0 22px 44px rgba(0, 0, 0, 6);
+    margin-top: 70px;
+  }
+  
+  .register1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 10px;
+  }
+  
+  .form {
+    margin: 10px 0 10px 0;
+    padding: 15px;
+    font-size: 16px;
+    border: 0;
+  }
+  
+  span {
+    font-size: 14px;
+    color: rgb(181, 73, 67);
+    margin-bottom: 15px;
+  }
+  
+  .success { 
+    background-color: #511ea3;
+    padding: 15px;
+    color: white;
+  }
+  
+  input {
+    background: #776b6b9d;
+    color: black;
+    height: 5px;
+    width: 200px;
+  }
+
+  
+  
+  .form-field {
+    background: #8d7e7eb5;
+    color:black;
+    height: 32px;
+  }
+  
