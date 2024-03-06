@@ -1,10 +1,9 @@
 body {
-
     min-height: 100vh;
 
   }
   
-  .container2 {
+  .container3 {
     width: 360px;
     background-color: white;
     padding: 10px;
@@ -15,14 +14,14 @@ body {
     border-radius: 12px;
   }
   
-  .register {
+  .register1 {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     padding: 10px;
   }
   
-  .form1 {
+  .form-field {
     margin: 10px 0 10px 0;
     padding: 15px;
     font-size: 16px;
@@ -50,7 +49,7 @@ body {
 
   
   
-  .form-fields {
+  .form-field1 {
     background: #8d7e7eb5;
     color:black;
     margin-left: 28px;

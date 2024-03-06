@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 import { useParams, useNavigate } from "react-router-dom";
+import './edit.css'
 
 export default function Update() {
   const { id } = useParams();
@@ -29,8 +30,8 @@ export default function Update() {
   };
 
   return (
-    <div className="form-container">
-      <form className="register-form" onSubmit={handleSubmit(onSubmit)}>
+    <div className="container3">
+      <form className="register2" onSubmit={handleSubmit(onSubmit)}>
         {submitted && <div className="success-message">Book updated successfully ✅</div>}
         <input
           className="form-field"
@@ -59,7 +60,7 @@ export default function Update() {
           onChange={(e) => setBook({ ...book, average_rating: e.target.value })}
         />
         <span>{errors.average_rating?.message}</span>
-        <button className="form-field" type="submit">
+        <button className="form-field1" type="submit">
           Update Book
         </button>
       </form>

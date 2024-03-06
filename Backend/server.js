@@ -4,13 +4,25 @@ require("dotenv").config();
 const app = express();
 const port = 3000;
 const cors = require('cors');
+const Joi = require('joi')
 const BookModel=require('./models/books.js')
 const novelData = require('./models/input.js');
+const { validateBooks } = require('./models/validator.js');
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+
+// app.post('/signup', (req,res)=>{
+//   const{error, value}= validateSignup.validate(req.body);
+//   if(error){
+//     console.log(error);
+//     return res.send(error.details);
+//   }
+//   res.send("Successfully Signed up");
+// })
 async function Connection() {
   await mongoose.connect(process.env.MONGODATA_URI);
   console.log('connected to DB')
@@ -31,11 +43,20 @@ app.get('/createbooks', (req, res) => {
   .then(input => res.json(input))
   .catch(err => res.json(err));
 });
+                                                                                                         
 
-app.post("/createbooks", (req, res) => {
-  novelData.create(req.body)
-    .then(input => res.json(input))
-    .catch(err => res.json(err));
+app.post("/createbooks", async (req, res) => {
+  try {
+      const { error, value } = validateBooks(req.body);
+      if (error) {
+          return res.status(400).json({ error: error.details[0].message });
+      }
+      const book = await novelData.create(value);
+      res.json(book);
+  } catch (err) {
+      console.error('Error creating books:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 app.put('/updatebook/:id', (req,res) => {
   const id = req.params.id
