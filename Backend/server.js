@@ -8,30 +8,84 @@ const Joi = require('joi')
 const BookModel=require('./models/books.js')
 const novelData = require('./models/input.js');
 const { validateBooks } = require('./models/validator.js');
+const { regFormSchema, UserModel } = require('./models/login.js');
+const cookieParser = require("cookie-parser");
+const jwt =require('jsonwebtoken')
 
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-
-// app.post('/signup', (req,res)=>{
-//   const{error, value}= validateSignup.validate(req.body);
-//   if(error){
-//     console.log(error);
-//     return res.send(error.details);
-//   }
-//   res.send("Successfully Signed up");
-// })
 async function Connection() {
   await mongoose.connect(process.env.MONGODATA_URI);
   console.log('connected to DB')
 
 }
+
+app.post('/signup', async (req, res) => {
+  console.log(req.body);
+  try {
+    // Validate request body against Joi schema
+    const { error, value } = regFormSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      return res.status(400).json({ error: error.details.map(detail => detail.message) });
+    }
+    
+    // Check if the email is already registered
+    const existingUser = await UserModel.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(409).json({ error: 'Email already registered' });
+    }
+    
+    // Create a new user using the UserModel
+    const newUser = new UserModel({
+      userName: req.body.userName,
+      email: req.body.email,
+      password: req.body.password // Storing plain-text password
+    });
+    await newUser.save();
+
+    // Generate JWT token
+    const accessToken = jwt.sign({ userId: newUser._id }, { expiresIn: '10h' });
+
+    // Set JWT token as a cookie
+    res.cookie("jwt", accessToken);
+
+    res.status(201).json({ success: true, message: 'Registration successful', userName: req.body.userName });
+  } catch (error) {
+    console.error('Error during user registration:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find the user by email
+    const user = await UserModel.findOne({ email });
+    if (!user || user.password !== password) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Generate JWT token
+    const accessToken = jwt.sign({ userId: user._id }, { expiresIn: '10h' });
+
+    // Set JWT token as a cookie
+    res.cookie("jwt", accessToken);
+
+    res.status(200).json({ success: true, message: 'Login successful', userName: user.userName });
+  } catch (error) {
+    console.error('Error during user login:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.get('/books', async (req, res) => {
   try {
     const books = await BookModel.find();
-    console.log('Retrieved books:', books);
+    // console.log('Retrieved books:', books);
     res.json(books);
   } catch (err) {
     console.error('Error retrieving books:', err);

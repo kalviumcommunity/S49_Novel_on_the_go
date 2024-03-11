@@ -5,9 +5,10 @@ import { Routes, Route } from 'react-router-dom';
 import WelcomeComponent from './welcome';
 import BookSearch from './get';
 import AddBookForm from './addbooks';
-import RegForm from './Login'
+import SignUpLogin from './Login';
 import Resultbooks from './resultbooks';
-import Update from './edit'
+import Update from './edit';
+
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
         <Route path="/addbooks" element={<AddBookForm />} />
         <Route path="/resultbooks" element={<Resultbooks />} />
         <Route path="/update/:id" element={<Update />} />
-        <Route path="/login" element={<RegForm />} />
+        <Route path="/login" element={<SignUpLogin />} />
+
       </Routes>
     </div>
   );
