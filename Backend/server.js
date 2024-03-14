@@ -6,8 +6,7 @@ const port = 3000;
 const cors = require('cors');
 const Joi = require('joi')
 const BookModel=require('./models/books.js')
-const novelData = require('./models/input.js');
-const { validateBooks } = require('./models/validator.js');
+const { validateBooks, NovelData } = require('./models/input.js');
 const { regFormSchema, UserModel } = require('./models/login.js');
 const cookieParser = require("cookie-parser");
 const jwt =require('jsonwebtoken')
@@ -23,56 +22,54 @@ async function Connection() {
 
 }
 
+
 app.post('/signup', async (req, res) => {
-  console.log(req.body);
   try {
-    // Validate request body against Joi schema
     const { error, value } = regFormSchema.validate(req.body, { abortEarly: false });
     if (error) {
       return res.status(400).json({ error: error.details.map(detail => detail.message) });
     }
-    
-    // Check if the email is already registered
+
     const existingUser = await UserModel.findOne({ email: req.body.email });
     if (existingUser) {
       return res.status(409).json({ error: 'Email already registered' });
     }
-    
-    // Create a new user using the UserModel
+
     const newUser = new UserModel({
       userName: req.body.userName,
       email: req.body.email,
-      password: req.body.password // Storing plain-text password
+      password: req.body.password 
     });
     await newUser.save();
 
-    // Generate JWT token
-    const accessToken = jwt.sign({ userId: newUser._id }, { expiresIn: '10h' });
-
-    // Set JWT token as a cookie
+    const accessToken = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '10h' });
     res.cookie("jwt", accessToken);
 
     res.status(201).json({ success: true, message: 'Registration successful', userName: req.body.userName });
   } catch (error) {
     console.error('Error during user registration:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server errrrrror' });
   }
 });
 
+app.get('/login', async (req, res) => {
+  try {
+    const users = await UserModel.find();
+    res.json(users);
+  } catch (err) {
+    console.error('Error retrieving books:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // Find the user by email
     const user = await UserModel.findOne({ email });
     if (!user || user.password !== password) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(400).json({ error: 'Invalid email or password' });
     }
 
-    // Generate JWT token
-    const accessToken = jwt.sign({ userId: user._id }, { expiresIn: '10h' });
-
-    // Set JWT token as a cookie
+    const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '10h' });
     res.cookie("jwt", accessToken);
 
     res.status(200).json({ success: true, message: 'Login successful', userName: user.userName });
@@ -81,7 +78,6 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 app.get('/books', async (req, res) => {
   try {
     const books = await BookModel.find();
@@ -93,7 +89,7 @@ app.get('/books', async (req, res) => {
   }
 });
 app.get('/createbooks', (req, res) => {
-  novelData.find({})
+  NovelData.find({})
   .then(input => res.json(input))
   .catch(err => res.json(err));
 });
@@ -101,33 +97,45 @@ app.get('/createbooks', (req, res) => {
 
 app.post("/createbooks", async (req, res) => {
   try {
-      const { error, value } = validateBooks(req.body);
-      if (error) {
-          return res.status(400).json({ error: error.details[0].message });
-      }
-      const book = await novelData.create(value);
-      res.json(book);
+    const { title, author, average_rating, userName } = req.body;
+    const { error } = validateBooks({ title, author, average_rating, userName });
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+    const book = await NovelData.create({ title, author, average_rating, userName });
+    res.json(book);
   } catch (err) {
-      console.error('Error creating books:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error creating books:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+app.get('/users', async (req, res) => {
+  try {
+    const users = await UserModel.find();
+    res.json(users);
+  } catch (err) {
+    console.error('Error retrieving books:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.put('/updatebook/:id', (req,res) => {
   const id = req.params.id
-  novelData.findByIdAndUpdate({_id: id},{
+  NovelData.findByIdAndUpdate({_id: id},{
     title: req.body.title, author: req.body.author, average_rating : req.body.average_rating})
   .then(usert => res.json(usert))
   .catch(err => res.json(err))
  })
  app.get('/getbook/:id',(req,res)=>{
   const id= req.params.id;
-  novelData.findById({_id:id})
+  NovelData.findById({_id:id})
   .then(usert => res.json(usert))
   .catch(err => res.json(err))
 })
 app.delete('/deletebooks/:id', (req, res) => {
   const id = req.params.id;
-  novelData.findByIdAndDelete({_id:id})
+  NovelData.findByIdAndDelete({_id:id})
     .then(deletedbook => res.json(deletedbook))
     .catch(err => res.json(err));
 });

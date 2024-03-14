@@ -12,39 +12,27 @@ export default function RegForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userName || !password) {
-      setMessage('Please fill in all fields.');
-      return;
-    }
     try {
+      let response;
       if (isLogin) {
-        const response = await axios.post('http://localhost:3000/login', { userName, email, password });
-        setMessage(response.data.message);
-        Cookies.set('userName', response.data.userName);
-        localStorage.setItem("username", response.data.username);
-        console.log(response.data);
-        localStorage.setItem('token', response.data.acesstoken);
-        // Set token or do other necessary actions
+        response = await axios.post('http://localhost:3000/login', { email, password });
       } else {
-        const response = await axios.post('http://localhost:3000/signup', { userName, email, password });
-        setMessage(response.data.message);
-        Cookies.set('userName', response.data.userName);
-        localStorage.setItem("username", response.data.username);
-        console.log(response.data);
-        localStorage.setItem('token', response.data.acesstoken);
-        // Set token or do other necessary actions
+        response = await axios.post('http://localhost:3000/signup', { userName, email, password });
       }
-      setIsAuthenticated(true);
+      setMessage(response.data.message);
+      Cookies.set('userName', response.data.userName);
+      Cookies.set('token', response.data.accessToken);
+      localStorage.setItem("username", response.data.userName);
+      localStorage.setItem('token', response.data.accessToken);
+      // Redirect or perform necessary actions after successful login/signup
+      setTimeout(() => {
+        window.location.href = '/'; // Simple redirect
+      }, 2000);
     } catch (error) {
-      console.error('Error:', error.response.data.error);
+      console.error('Error:', error.response.data);
       setMessage(error.response.data.error);
     }
   };
-
-  if (isAuthenticated) {
-    window.location.reload();
-    return null;
-  }
 
   return (
     <div className="container2">
