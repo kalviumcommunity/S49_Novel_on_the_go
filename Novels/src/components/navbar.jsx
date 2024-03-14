@@ -22,12 +22,9 @@ export default function Navbar({ onSearch }) {
   return (
     <div className="main1">
       <nav className="nav">
-        {/* Link to navigate to the main page. onClick event to clear the search query */}
         <Link to="/" onClick={clearSearchQuery} className="site-title">
           Home
         </Link>
-
-        {/* Search form */}
         <form onSubmit={handleSearchSubmit} className="search-form">
           <input
             type="search"

@@ -38,6 +38,9 @@ function Resultbooks() {
 
   return (
     <div>
+      <Link to="/" className='site-title'>
+          Home
+        </Link>
       {books.map(book => (
         <div className="card" key={book._id}>
           <h3>{book.title}</h3>

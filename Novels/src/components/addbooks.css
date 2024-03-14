@@ -55,4 +55,9 @@ body {
     color:black;
     height: 32px;
   }
-  
+  .site-title {
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+  }
